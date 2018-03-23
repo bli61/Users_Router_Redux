@@ -3,15 +3,13 @@ import { Redirect } from 'react-router-dom';
 class EditUser extends Component {
   constructor(props) {
     super(props);
-    this.state={
-      editUser: {
-        firstName: '',
-        lastName: '',
-        title: '',
-        sex: '',
-        age: '',
-        password: '',
-      },
+    this.state = {
+      firstName: '',
+      lastName: '',
+      title: '',
+      sex: '',
+      age: '',
+      password: '',
       repeat: '',
       passwordsSame: true
     };
@@ -21,48 +19,45 @@ class EditUser extends Component {
     let { getEditUser, id } = this.props;
     id = parseInt(id);
     const curEditUser = getEditUser(id);
-    this.setState({editUser: curEditUser});
+    console.log('cur edit user: ', curEditUser);
+    if (curEditUser) {
+      const { firstName, lastName, title, sex, age, password } = curEditUser;
+      this.setState({ firstName, lastName, title, sex, age, password });
+    }
   }
 
   onChange = (e, key) => {
     const editUser = {};
     editUser[key] = e.target.value;
-    this.setState({
-      editUser: {
-        ...this.state.editUser,
-        ...editUser
-      }
-    });
+    this.setState(editUser);
   };
 
   onRepeatChange = e => {
-    this.setState({repeat: e.target.value});
+    this.setState({ repeat: e.target.value });
   };
 
   handleSubmit = e => {
-    let {id, editUser, redirectToHome} = this.props;
+    e.preventDefault();
+    let { id, editUser, redirectToHome } = this.props;
+    let { firstName, lastName, title, sex, age, password } = this.state;
     id = parseInt(id);
-    if (this.state.editUser.password === this.state.repeat) {
-      editUser(id, this.state.editUser);
+    if (this.state.password === this.state.repeat) {
+      const curUser = { id, firstName, lastName, title, sex, age, password };
+      editUser(id, curUser);
       this.setState({
-        editUser: {
-          firstName: '',
-          lastName: '',
-          title: '',
-          sex: '',
-          age: '',
-          password: ''
-        },
+        firstName: '',
+        lastName: '',
+        title: '',
+        sex: '',
+        age: '',
+        password: '',
         repeat: '',
         passwordsSame: true
       });
       redirectToHome();
     } else {
       this.setState({
-        editUser: {
-          ...this.state.editUser,
-          password: '',
-        },
+        password: '',
         repeat: '',
         passwordsSame: false
       });
@@ -72,8 +67,9 @@ class EditUser extends Component {
   render() {
     let { redirect } = this.props;
     if (redirect) {
-      return <Redirect to={{pathname: '/'}} />;
+      return <Redirect to={{ pathname: '/' }} />;
     }
+    console.log(this.state.editUser);
     return (
       <div className="new_user">
         <h3>Edit User:</h3>
@@ -86,7 +82,7 @@ class EditUser extends Component {
               <input
                 type="text"
                 id="first_name"
-                value={this.state.editUser.firstName}
+                value={this.state.firstName}
                 className="form-control"
                 onChange={e => this.onChange(e, 'firstName')}
                 required={true}
@@ -102,7 +98,7 @@ class EditUser extends Component {
               <input
                 type="text"
                 id="last_name"
-                value={this.state.editUser.lastName}
+                value={this.state.lastName}
                 className="form-control"
                 onChange={e => this.onChange(e, 'lastName')}
                 required={true}
@@ -118,7 +114,7 @@ class EditUser extends Component {
               <input
                 type="text"
                 id="title"
-                value={this.state.editUser.title}
+                value={this.state.title}
                 className="form-control"
                 onChange={e => this.onChange(e, 'title')}
               />
@@ -146,7 +142,7 @@ class EditUser extends Component {
               <input
                 type="number"
                 id="age"
-                value={this.state.editUser.age}
+                value={this.state.age}
                 className="form-control"
                 onChange={e => this.onChange(e, 'age')}
               />
@@ -161,7 +157,7 @@ class EditUser extends Component {
               <input
                 type="password"
                 id="password"
-                value={this.state.editUser.password}
+                value={this.state.password}
                 className="form-control"
                 onChange={e => this.onChange(e, 'password')}
                 required={true}
