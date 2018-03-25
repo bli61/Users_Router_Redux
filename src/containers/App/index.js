@@ -6,7 +6,6 @@ import NewUser from '../../components/NewUser';
 import EditUser from '../../components/EditUser';
 import * as actions from '../../actions';
 import './App.css';
-import fakeUsers from '../../fake_users';
 
 // save state for cur page, sorting order etc.
 // validation
@@ -14,12 +13,12 @@ import fakeUsers from '../../fake_users';
 
 class App extends Component {
   
-  getEditUser = id => {
+  getEditUser = _id => {
     console.log('get edit user is called');
-    console.log('id: ', id)
-    const users = this.props.users;
+    console.log('id: ', _id)
+    const users = this.props.pageOfUsers;
     for (let user of users) {
-      if (user.id === id) {
+      if (user._id === _id) {
         return user;
       }
     }
@@ -43,15 +42,32 @@ class App extends Component {
   };
 
   componentDidMount() {
-    for (let user of fakeUsers) {
-      this.addUser(user);
-    }
+    
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (this.props.users !== prevProps.users) {
+    if (!this.equal(this.props.pageOfUsers, prevProps.pageOfUsers)) {
       this.cancelRedirect();
+      //this.props.dispatch(actions.fetchPage(this.props.status.curPage, 5));
     }
+  }
+
+  equal = (arr1, arr2) => {
+    if (arr1 === null && arr2 === null) {
+      return true;
+    }
+    if (arr1 === null || arr2 === null) {
+      return false;
+    }
+    if (arr1.length !== arr2.length) {
+      return false;
+    }
+    for (let i = 0; i < arr1.length; i++) {
+      if (arr1[i]._id !== arr2[i]._id) {
+        return false;
+      }
+    }
+    return true;
   }
 
   render() {
@@ -84,7 +100,7 @@ class App extends Component {
 
             return (
               <EditUser
-                id={match.params.userId}
+                _id={match.params.userId}
                 editUser={this.editUser}
                 getEditUser={this.getEditUser}
                 redirectToHome={this.redirectToHome}
@@ -101,8 +117,9 @@ class App extends Component {
 
 const mapStateToProps = state => {
   return {
-    users: state.users,
+    pageOfUsers: state.page.pageOfUsers,
     redirect: state.redirect,
+    status: state.status
   };
 };
 

@@ -34,7 +34,7 @@ const UserTable = ({ users, handleSort, deleteUser }) => {
         {
           users.map(user => {
             return (
-              <User key={user.id} 
+              <User key={user._id} 
                 {...user} 
                 deleteUser={deleteUser}
               />

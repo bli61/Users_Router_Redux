@@ -1,10 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const User = ({id, firstName, lastName, title, sex, age, deleteUser}) => {
+const User = ({_id, firstName, lastName, title, sex, age, deleteUser}) => {
   return (
     <tr>
-      <td><Link className="btn btn-outline-secondary" to={`/edit/${id}`}>Edit</Link></td>
+      <td><Link className="btn btn-outline-secondary" to={`/edit/${_id}`}>Edit</Link></td>
       <td>{firstName}</td>
       <td>{lastName}</td>
       <td>{title}</td>
@@ -14,7 +14,7 @@ const User = ({id, firstName, lastName, title, sex, age, deleteUser}) => {
         <button 
           type="button" 
           className="btn btn-outline-danger"
-          onClick={() => deleteUser(id)}
+          onClick={() => deleteUser(_id)}
         >
             Delete
         </button>

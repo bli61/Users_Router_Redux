@@ -10,24 +10,20 @@ import './style.css';
 class UserList extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      displyedUsers: []
-    };
   }
 
   componentDidMount() {
-    const users = this.props.pageOfUsers;
-    this.setState({pageOfUsers: users});
+    this.props.dispatch(actions.fetchPage(1, 5));
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (this.state.displyedUsers !== this.props.pageOfUsers) {
-      this.setState({displyedUsers: this.props.pageOfUsers});
+    if (this.props.pageOfUsers.length !== prevProps.pageOfUsers.length) {
+      this.props.dispatch(actions.fetchPage(this.props.curPage, 5));
     }
   }
 
-  deleteUser = id => {
-    this.props.dispatch(actions.deleteUser(id));
+  deleteUser = _id => {
+    this.props.dispatch(actions.deleteUser(_id));
   };
 
   changeSearchInput = input => {
@@ -36,22 +32,12 @@ class UserList extends Component {
 
   handleSort = (e, key) => {
     e.preventDefault();
-    const users = this.state.displyedUsers;
-    users.sort((user1, user2) => {
-      if (user1[key] === user2[key]) {
-        return 0;
-      }
-      return user1[key] < user2[key] ? -1 : 1;
-    });
-    this.setState({displyedUsers: users});
-  };
-
-  setPageOfUsers = pageOfUsers => {
-    this.props.dispatch(actions.setPageOfUsers(pageOfUsers))
+    this.props.dispatch(actions.sortUsers(key));
   };
 
   render() {
-    let filteredUsers = this.state.displyedUsers;
+    let filteredUsers = this.props.pageOfUsers;
+    console.log('filtered users: ', filteredUsers);
     const searchInput = this.props.searchInput;
     console.log(searchInput)
     if (searchInput !== '') {
@@ -82,7 +68,6 @@ class UserList extends Component {
           deleteUser={this.deleteUser}
         />
         <Pagination
-          items={this.props.users}
           setPageOfUsers={this.setPageOfUsers}
         />
         <Link to="/new_user" className="btn btn-primary" onClick={this.handleClick}>
@@ -97,7 +82,9 @@ class UserList extends Component {
 const mapStateToProps = state => {
   return {
     searchInput: state.searchInput,
-    pageOfUsers: state.pageOfUsers
+    totalItems: state.page.totalItems,
+    pageOfUsers: state.page.pageOfUsers,
+    curPage: state.page.curPage
   };
 }
 

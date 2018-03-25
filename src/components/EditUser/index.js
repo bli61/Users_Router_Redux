@@ -16,9 +16,8 @@ class EditUser extends Component {
   }
 
   componentDidMount() {
-    let { getEditUser, id } = this.props;
-    id = parseInt(id);
-    const curEditUser = getEditUser(id);
+    let { getEditUser, _id } = this.props;
+    const curEditUser = getEditUser(_id);
     console.log('cur edit user: ', curEditUser);
     if (curEditUser) {
       const { firstName, lastName, title, sex, age, password } = curEditUser;
@@ -38,12 +37,11 @@ class EditUser extends Component {
 
   handleSubmit = e => {
     e.preventDefault();
-    let { id, editUser, redirectToHome } = this.props;
+    let { _id, editUser, redirectToHome } = this.props;
     let { firstName, lastName, title, sex, age, password } = this.state;
-    id = parseInt(id);
     if (this.state.password === this.state.repeat) {
-      const curUser = { id, firstName, lastName, title, sex, age, password };
-      editUser(id, curUser);
+      const curUser = { _id, firstName, lastName, title, sex, age, password };
+      editUser(_id, curUser);
       this.setState({
         firstName: '',
         lastName: '',

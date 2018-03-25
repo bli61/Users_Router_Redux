@@ -1,16 +1,14 @@
 import { combineReducers } from 'redux';
-import users from './users';
 import redirect from './redirect';
 import searchInput from './searchInput';
 import page from './page';
-import pageOfUsers from './pageOfUsers';
+import status from './status';
 
 const reducers = combineReducers({
-  users,
   redirect,
   searchInput,
   page,
-  pageOfUsers
+  status
 });
 
 export default reducers;

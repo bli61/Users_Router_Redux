@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { setPage, setTotalItems } from '../../actions';
+import { fetchPage, setTotalItems, setStatusCurPage } from '../../actions';
 
 class Pagination extends Component {
   constructor(props) {
@@ -11,26 +11,25 @@ class Pagination extends Component {
   }
 
   componentDidMount() {
-    if (this.props.items && this.props.items.length) {
-      this.setCurPage(1);
-    }
+    this.setCurPage(1);
   }
 
   componentDidUpdate(prevProps, prevState) {
     // reset pages if items array has been changed
-    if (this.props.items !== prevProps.items) {
-      this.setCurPage(1);
+    if (this.props.page.totalItems !== prevProps.page.totalItems) {
+      this.setCurPage(this.props.status.curPage);
     }
   }
 
-  setCurPage = page => {
-    const { items, dispatch } = this.props;
-    dispatch(setTotalItems(items.length));
-    dispatch(setPage(page));
-    const { pageSize, totalItems } = this.props.page;
+  setCurPage = curPage => {
+    const { page, dispatch } = this.props;
+    dispatch(setTotalItems());
+    dispatch(fetchPage(curPage, page.pageSize));
+    dispatch(setStatusCurPage(curPage));
+    const { pageSize, startIndex, totalItems } = this.props.page;
     const pageNums = [];
     
-    const totalPages = Math.ceil(items.length / pageSize);
+    const totalPages = Math.ceil(totalItems / pageSize);
     let startPage = 0;
     let endPage = 0;
     if (totalPages <= 10) {
@@ -53,14 +52,6 @@ class Pagination extends Component {
     for (let i = startPage; i <= endPage; i++) {
       pageNums.push(i);
     }
-    const startIndex = (page - 1) * pageSize;
-    const endIndex = startIndex + pageSize - 1;
-    console.log('page: ', page)
-    console.log('start index: ', startIndex);
-    console.log('end index: ', endIndex);
-    const pageOfUsers = items.slice(startIndex, endIndex + 1);
-    this.props.setPageOfUsers(pageOfUsers);
-    console.log('pageNums: ', pageNums);
     this.setState({ pageNums });
   };
 
@@ -93,7 +84,8 @@ class Pagination extends Component {
 
 const mapStateToProps = state => {
   return {
-    page: state.page
+    page: state.page,
+    status: state.status
   };
 }
 
